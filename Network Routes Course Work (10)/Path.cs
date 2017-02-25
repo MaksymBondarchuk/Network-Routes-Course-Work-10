@@ -27,9 +27,14 @@ namespace Network_Routes_Course_Work_10
             return x.Weight + y.Weight;
         }
 
-        public void RestoreVertices(List<List<int>> weights)
+        public void RestoreVertices(List<List<int>> next, int u, int v)
         {
-            throw new NotImplementedException();
+            Vertices.Add(u);
+            while (u != v)
+            {
+                u = next[u][v];
+                Vertices.Add(u);
+            }
         }
 
         public override string ToString()

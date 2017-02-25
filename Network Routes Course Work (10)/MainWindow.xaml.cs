@@ -41,7 +41,7 @@ namespace Network_Routes_Course_Work_10
 
         private void ButtonBuild_Click(object sender, RoutedEventArgs e)
         {
-            Graph.BuildPathes();
+            Graph.FloydWarshallWithPathReconstruction();
         }
     }
 }

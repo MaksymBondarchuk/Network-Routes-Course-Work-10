@@ -7,6 +7,7 @@ namespace Network_Routes_Course_Work_10
     public class Graph
     {
         public List<List<int>> Weights { get; set; } = new List<List<int>>();
+        public List<List<int>> Next { get; set; } = new List<List<int>>();
         public List<List<Path>> Pathes { get; set; } = new List<List<Path>>();
 
         public void LoadFromJson(string fileName)
@@ -27,7 +28,7 @@ namespace Network_Routes_Course_Work_10
                 file.WriteLine(json);
         }
 
-        public void BuildPathes()
+        public void FloydWarshall()
         {
             Pathes.Clear();
 
@@ -44,6 +45,37 @@ namespace Network_Routes_Course_Work_10
                     for (var j = 0; j < size; j++)
                         if (Pathes[i][j].Weight > Pathes[i][k].Weight + Pathes[k][j].Weight)
                             Pathes[i][j].Weight = Pathes[i][k].Weight + Pathes[k][j].Weight;
+        }
+
+        public void FloydWarshallWithPathReconstruction()
+        {
+            Pathes.Clear();
+            Next.Clear();
+
+            var size = Weights.Count;
+            for (var u = 0; u < size; u++)
+            {
+                Pathes.Add(new List<Path>());
+                Next.Add(new List<int>());
+                for (var v = 0; v < size; v++)
+                {
+                    Pathes[u].Add(new Path { Weight = Weights[u][v] });
+                    Next[u].Add(v);
+                }
+            }
+
+            for (var k = 0; k < size; k++)
+                for (var i = 0; i < size; i++)
+                    for (var j = 0; j < size; j++)
+                        if (Pathes[i][j].Weight > Pathes[i][k].Weight + Pathes[k][j].Weight)
+                        {
+                            Pathes[i][j].Weight = Pathes[i][k].Weight + Pathes[k][j].Weight;
+                            Next[i][j] = Next[i][k];
+                        }
+
+            for (var i = 0; i < size; i++)
+                for (var j = i + 1; j < size; j++)
+                    Pathes[i][j].RestoreVertices(Next, i, j);
         }
     }
 }
