@@ -8,6 +8,7 @@
     <Grid>
         <Button x:Name="ButtonOpen" Content="Open" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="ButtonOpen_Click"/>
         <Button x:Name="ButtonSave" Content="Save" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="75" Click="ButtonSave_Click"/>
+        <Button x:Name="ButtonBuild" Content="Build" HorizontalAlignment="Left" Margin="10,90,0,0" VerticalAlignment="Top" Width="75" Click="ButtonBuild_Click"/>
 
     </Grid>
 </Window>

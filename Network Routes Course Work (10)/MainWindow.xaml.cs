@@ -38,5 +38,10 @@ namespace Network_Routes_Course_Work_10
             if (dlg.ShowDialog() == true)
                 Graph.LoadToJson(dlg.FileName);
         }
+
+        private void ButtonBuild_Click(object sender, RoutedEventArgs e)
+        {
+            Graph.BuildPathes();
+        }
     }
 }

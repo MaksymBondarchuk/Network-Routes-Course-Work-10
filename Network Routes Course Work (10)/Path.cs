@@ -13,6 +13,25 @@ namespace Network_Routes_Course_Work_10
 
         public List<int> Vertices { get; set; } = new List<int>();
 
+        public static bool operator >(Path x, Path y)
+        {
+            return x.Weight > y.Weight;
+        }
+
+        public static bool operator <(Path x, Path y)
+        {
+            return x.Weight < y.Weight;
+        }
+        public static int operator +(Path x, Path y)
+        {
+            return x.Weight + y.Weight;
+        }
+
+        public void RestoreVertices(List<List<int>> weights)
+        {
+            throw new NotImplementedException();
+        }
+
         public override string ToString()
         {
             var result = Vertices.Aggregate(string.Empty, (current, vertex) => current + $"{vertex}, ");
