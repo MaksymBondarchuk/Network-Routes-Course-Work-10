@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -75,9 +74,9 @@ namespace Network_Routes_Course_Work_10
             var n = Graph.Vertices.Count;
 
             const double scale = 2.5;
-            var r = Math.Min(CanvasMain.ActualWidth, CanvasMain.ActualHeight) / scale;
-            var x0 = CanvasMain.Margin.Left + CanvasMain.ActualWidth / scale;
-            var y0 = CanvasMain.Margin.Top + CanvasMain.ActualHeight / scale;
+            var r = Math.Min(CanvasMain.ActualWidth - Vertex.VertexSize * .5, CanvasMain.ActualHeight - Vertex.VertexSize * .5) / scale;
+            var x0 = CanvasMain.ActualWidth / 2;
+            var y0 = CanvasMain.ActualHeight / 2;
 
             for (var i = 0; i < Graph.Vertices.Count; i++)
             {
