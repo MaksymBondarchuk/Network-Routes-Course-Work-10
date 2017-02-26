@@ -34,15 +34,6 @@ namespace Network_Routes_Course_Work_10
         public readonly List<int> ConnectedBy = new List<int>();
 
         /// <summary>
-        /// Number of color node is colored in
-        /// </summary>
-        public int ColorNumber;
-        /// <summary>
-        /// Number of conflicts for node
-        /// </summary>
-        public int ConflictsNumber;
-
-        /// <summary>
         /// Checks if p is point of node
         /// </summary>
         /// <param name="p">Explored point</param>

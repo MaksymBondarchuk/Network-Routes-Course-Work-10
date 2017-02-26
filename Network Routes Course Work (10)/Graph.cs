@@ -6,6 +6,19 @@ namespace Network_Routes_Course_Work_10
 {
     public class Graph
     {
+        #region Visual
+        /// <summary>
+        /// List of graph nodes
+        /// </summary>
+        public readonly List<Vertex> Vertices = new List<Vertex>();
+        /// <summary>
+        /// List of connections between nodes. For visual part only
+        /// </summary>
+        public readonly List<Edge> Edges = new List<Edge>();
+        #endregion
+
+
+        #region Math
         public List<List<int>> Weights { get; set; } = new List<List<int>>();
         public List<List<int>> Next { get; set; } = new List<List<int>>();
         public List<List<Path>> Pathes { get; set; } = new List<List<Path>>();
@@ -19,6 +32,18 @@ namespace Network_Routes_Course_Work_10
                 var result = deserializer.Deserialize<Graph>(json);
                 Weights = result.Weights;
             }
+
+            var size = Weights.Count;
+            for (var i = 0; i < size; i++)
+                Vertices.Add(new Vertex());
+
+            for (var i = 0; i < size; i++)
+                for (var j = i + 1; j < size; j++)
+                {
+                    Vertices[i].ConnectedWith.Add(j);
+                    Vertices[j].ConnectedWith.Add(i);
+                }
+
         }
 
         public void LoadToJson(string fileName)
@@ -77,5 +102,6 @@ namespace Network_Routes_Course_Work_10
                 for (var j = i + 1; j < size; j++)
                     Pathes[i][j].RestoreVertices(Next, i, j);
         }
+        #endregion
     }
 }
