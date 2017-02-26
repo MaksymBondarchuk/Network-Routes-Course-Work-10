@@ -22,7 +22,7 @@ namespace Network_Routes_Course_Work_10
         public override string ToString()
         {
             var result = Vertices.Aggregate(string.Empty, (current, vertex) => current + $"{vertex}, ");
-            return result.Substring(0, result.Length - 1);
+            return result.Substring(0, result.Length - 2);
         }
     }
 }

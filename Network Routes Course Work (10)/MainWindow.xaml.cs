@@ -20,6 +20,7 @@ namespace Network_Routes_Course_Work_10
 
         private Brush StrokeBrush { get; } = Brushes.Black;
         private Brush FillBrush { get; } = Brushes.White;
+        private Brush PathBrush { get; } = Brushes.Red;
 
         public MainWindow()
         {
@@ -47,6 +48,27 @@ namespace Network_Routes_Course_Work_10
         {
             Graph.LoadFromJson(fileName);
             DrawGraph();
+            Graph.FloydWarshallWithPathReconstruction();
+
+            var size = Graph.Pathes.Count;
+            for (var i = 0; i < size; i++)
+                for (var j = i + 1; j < size; j++)
+                {
+                    //var lwi = new ListViewItem
+                    //{
+                    //    ColumnFrom = i.ToString(),
+                    //    ColumnTo = j.ToString(),
+                    //    ColumnPath = Graph.Pathes[i][j].ToString(),
+                    //    ColumnWeight = Graph.Pathes[i][j].Weight.ToString()
+                    //};
+                    ListViewPathes.Items.Add(new ListViewItem
+                    {
+                        ColumnFrom = i.ToString(),
+                        ColumnTo = j.ToString(),
+                        ColumnPath = Graph.Pathes[i][j].ToString(),
+                        ColumnWeight = Graph.Pathes[i][j].Weight.ToString()
+                    });
+                }
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
@@ -119,7 +141,7 @@ namespace Network_Routes_Course_Work_10
                 TextAlignment = TextAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center,
                 FontSize = Vertex.VertexFontSize,
-                Text = (idx + 1).ToString()
+                Text = idx.ToString()
             };
             grid.Children.Add(textBlock);
             CanvasMain.Children.Add(grid);
@@ -217,6 +239,13 @@ namespace Network_Routes_Course_Work_10
             {
                 Panel.SetZIndex(CanvasMain.Children[Graph.Vertices[_onNode].CanvasIdx], 4);
                 MoveNode(mousePos);
+
+                //if (1 < Graph.Vertices.Select(v => v.IsMyPoint(mousePos)).Count())
+                //{
+                //    MoveNode(OldPoint);
+                //    _onNode = -1;
+                //    //Graph.Vertices[_onNode].Location = OldPoint;
+                //}
             }
             else
             {
@@ -236,6 +265,36 @@ namespace Network_Routes_Course_Work_10
         {
             CanvasMain.Children.Clear();
             DrawGraph();
+        }
+
+        private void ListViewPathes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var listViewItem = ListViewPathes.SelectedItem as ListViewItem;
+            if (listViewItem == null)
+                return;
+            var path = Graph.Pathes[Convert.ToInt32(listViewItem.ColumnFrom)][Convert.ToInt32(listViewItem.ColumnTo)];
+
+            foreach (var edge in Graph.Edges)
+            {
+                var line = CanvasMain.Children[edge.CanvasIdx] as Line;
+                if (line == null) continue;
+                line.Stroke = StrokeBrush;
+                line.StrokeThickness = 2;
+            }
+
+            for (var i = 0; i < path.Vertices.Count - 1; i++)
+            {
+                var v1 = path.Vertices[i];
+                var v2 = path.Vertices[i + 1];
+                foreach (var edge in Graph.Edges)
+                {
+                    if (edge.Vertex1 != v1 && edge.Vertex2 != v1 || edge.Vertex2 != v2 && edge.Vertex1 != v2) continue;
+                    var line = CanvasMain.Children[edge.CanvasIdx] as Line;
+                    if (line == null) continue;
+                    line.Stroke = PathBrush;
+                    line.StrokeThickness = 4;
+                }
+            }
         }
     }
 }
