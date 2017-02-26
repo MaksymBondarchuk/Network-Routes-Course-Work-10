@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -24,6 +25,11 @@ namespace Network_Routes_Course_Work_10
         public MainWindow()
         {
             InitializeComponent();
+
+            //DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent;
+            ////System.IO.Path.Combine(directoryInfo.FullName, "Case 2.json");
+            //LoadAndDraw(System.IO.Path.Combine(directoryInfo.FullName, "Case 2.json"));
+            LoadAndDraw("..\\..\\Case\\Case 2.json");
         }
 
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
@@ -35,10 +41,13 @@ namespace Network_Routes_Course_Work_10
             };
 
             if (dlg.ShowDialog() == true)
-            {
-                Graph.LoadFromJson(dlg.FileName);
-                DrawGraph();
-            }
+                LoadAndDraw(dlg.FileName);
+        }
+
+        private void LoadAndDraw(string fileName)
+        {
+            Graph.LoadFromJson(fileName);
+            DrawGraph();
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
