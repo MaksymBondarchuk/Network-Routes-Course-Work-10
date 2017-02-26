@@ -9,10 +9,7 @@ using Microsoft.Win32;
 
 namespace Network_Routes_Course_Work_10
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private Graph Graph { get; } = new Graph();
 
@@ -68,9 +65,10 @@ namespace Network_Routes_Course_Work_10
         {
             var n = Graph.Vertices.Count;
 
-            var r = Math.Min(CanvasMain.ActualWidth, CanvasMain.ActualHeight) / 2.2;
-            var x0 = CanvasMain.Margin.Left + CanvasMain.ActualWidth / 2.2;
-            var y0 = CanvasMain.Margin.Top + CanvasMain.ActualHeight / 2.2;
+            const double scale = 2.5;
+            var r = Math.Min(CanvasMain.ActualWidth, CanvasMain.ActualHeight) / scale;
+            var x0 = CanvasMain.Margin.Left + CanvasMain.ActualWidth / scale;
+            var y0 = CanvasMain.Margin.Top + CanvasMain.ActualHeight / scale;
 
             for (var i = 0; i < Graph.Vertices.Count; i++)
             {
@@ -186,7 +184,7 @@ namespace Network_Routes_Course_Work_10
             Graph.Vertices[_onNode].Location = mousePos;
         }
 
-        private void Window_MouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             for (var i = 0; i < Graph.Vertices.Count; i++)
                 if (Graph.Vertices[i].IsMyPoint(Mouse.GetPosition(CanvasMain)))
@@ -220,6 +218,12 @@ namespace Network_Routes_Course_Work_10
             var grid = (Grid)CanvasMain.Children[Graph.Vertices[nodeIdx].CanvasIdx];
             var nodeGray = (Ellipse)grid.Children[0];
             nodeGray.Fill = color;
+        }
+
+        private void WindowMain_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            CanvasMain.Children.Clear();
+            DrawGraph();
         }
     }
 }

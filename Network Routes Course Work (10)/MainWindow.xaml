@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" WindowState="Maximized">
+        Title="MainWindow" Height="350" Width="525" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" WindowState="Maximized" SizeChanged="WindowMain_SizeChanged">
     <Grid>
         <Button x:Name="ButtonOpen" Content="Open" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="ButtonOpen_Click"/>
         <Button x:Name="ButtonSave" Content="Save" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="75" Click="ButtonSave_Click"/>
