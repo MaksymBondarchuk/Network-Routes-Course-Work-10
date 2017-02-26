@@ -205,6 +205,8 @@ namespace Network_Routes_Course_Work_10
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
         {
             _onNode = -1;
+            foreach (var vertex in Graph.Vertices)
+                Panel.SetZIndex(CanvasMain.Children[vertex.CanvasIdx], 2);
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
@@ -216,9 +218,11 @@ namespace Network_Routes_Course_Work_10
                 Panel.SetZIndex(CanvasMain.Children[Graph.Vertices[_onNode].CanvasIdx], 4);
                 MoveNode(mousePos);
             }
-
-            for (var i = 0; i < Graph.Vertices.Count; i++)
-                FillNode(i, Graph.Vertices[i].IsMyPoint(mousePos) ? Brushes.Gray : FillBrush);
+            else
+            {
+                for (var i = 0; i < Graph.Vertices.Count; i++)
+                    FillNode(i, Graph.Vertices[i].IsMyPoint(mousePos) ? Brushes.Gray : FillBrush);
+            }
         }
 
         private void FillNode(int nodeIdx, Brush color)
