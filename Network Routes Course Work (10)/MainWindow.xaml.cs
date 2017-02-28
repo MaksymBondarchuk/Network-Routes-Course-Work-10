@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Shapes;
 using Microsoft.Win32;
 
@@ -20,12 +22,14 @@ namespace Network_Routes_Course_Work_10
 
         private Brush StrokeBrush { get; } = Brushes.Black;
         private Brush FillBrush { get; } = Brushes.White;
-        private Brush PathBrush { get; } = Brushes.Red;
+        //private Brush PathBrush { get; } = Brushes.Red;
+        private Brush PathBrush { get; } = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF007ACC"));
 
         public MainWindow()
         {
             InitializeComponent();
-
+            CanvasMain.Background = new SolidColorBrush(Colors.White);
+            
             //DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent;
             ////System.IO.Path.Combine(directoryInfo.FullName, "Case 2.json");
             //LoadAndDraw(System.IO.Path.Combine(directoryInfo.FullName, "Case 2.json"));
@@ -108,6 +112,7 @@ namespace Network_Routes_Course_Work_10
                 AddNotVisual(new Point(x, y), i, StrokeBrush, FillBrush);
             }
 
+            //ConnectNotVisual(0, 1, StrokeBrush);
             for (var i = 0; i < Graph.Vertices.Count; i++)
             {
                 var i1 = i;
@@ -153,17 +158,46 @@ namespace Network_Routes_Course_Work_10
 
         private void ConnectNotVisual(int idx1, int idx2, Brush stroke)
         {
-            var conn = new Line
+            var vertex1 = Graph.Vertices[idx1];
+            var vertex2 = Graph.Vertices[idx2];
+
+            const int strokeThickness = 30;
+            const int halfStrokeThickness = 15;
+            var height = Math.Abs(vertex1.Location.Y - vertex2.Location.Y) + strokeThickness;
+            var width = Math.Abs(vertex1.Location.X - vertex2.Location.X) + strokeThickness;
+            var offsetX = Math.Min(vertex1.Location.X, vertex2.Location.X) - halfStrokeThickness;
+            var offsetY = Math.Min(vertex1.Location.Y, vertex2.Location.Y) - halfStrokeThickness;
+            var grid = new Grid
             {
-                X1 = Graph.Vertices[idx1].Location.X,
-                Y1 = Graph.Vertices[idx1].Location.Y,
-                X2 = Graph.Vertices[idx2].Location.X,
-                Y2 = Graph.Vertices[idx2].Location.Y,
+                Height = height,
+                Width = width,
+                Margin = new Thickness(offsetX, offsetY, 0, 0)
+            };
+
+            var line = new Line
+            {
+                X1 = Graph.Vertices[idx1].Location.X - offsetX,
+                Y1 = Graph.Vertices[idx1].Location.Y - offsetY,
+                X2 = Graph.Vertices[idx2].Location.X - offsetX,
+                Y2 = Graph.Vertices[idx2].Location.Y - offsetY,
                 StrokeThickness = 2,
                 Stroke = stroke
             };
+            grid.Children.Add(line);
 
-            CanvasMain.Children.Add(conn);
+            var textBlock = new TextBlock
+            {
+                HorizontalAlignment = HorizontalAlignment.Center,
+                TextAlignment = TextAlignment.Center,
+                VerticalAlignment = VerticalAlignment.Center,
+                FontSize = Edge.EdgeFontSize,
+                Text = $" {Graph.Weights[idx1][idx2]} ",
+                Background = Brushes.White,
+                //Margin = new Thickness(40, 40, 0, 0),
+            };
+            grid.Children.Add(textBlock);
+
+            CanvasMain.Children.Add(grid);
             Panel.SetZIndex(CanvasMain.Children[CanvasMain.Children.Count - 1], 1);
 
             Graph.Edges.Add(new Edge
@@ -189,27 +223,56 @@ namespace Network_Routes_Course_Work_10
         private void MoveNode(Point mousePos)
         {
             // Moving node
-            var grid = (Grid)CanvasMain.Children[Graph.Vertices[_onNode].CanvasIdx];
-            grid.Margin = new Thickness(mousePos.X - grid.Height * .5, mousePos.Y - grid.Width * .5, 0, 0);
+            var gridVertex = (Grid)CanvasMain.Children[Graph.Vertices[_onNode].CanvasIdx];
+            gridVertex.Margin = new Thickness(mousePos.X - gridVertex.Height * .5, mousePos.Y - gridVertex.Width * .5, 0, 0);
+
+            const int strokeThickness = 30;
+            const int halfStrokeThickness = 15;
 
             // Moving node connections
-            foreach (var conn in Graph.Vertices[_onNode].ConnectedBy)
-                if (Graph.Vertices[_onNode].Location == Graph.Edges[conn].P1)
+            foreach (var e in Graph.Vertices[_onNode].ConnectedBy)
+            {
+                var edge = Graph.Edges[e];
+                var vertex = Graph.Vertices[_onNode];
+                if (vertex.Location == edge.P1)
                 {
-                    Graph.Edges[conn].P1 = mousePos;
+                    edge.P1 = mousePos;
 
-                    var line = (Line)CanvasMain.Children[Graph.Edges[conn].CanvasIdx];
-                    line.X1 = mousePos.X;
-                    line.Y1 = mousePos.Y;
+                    var height = Math.Abs(vertex.Location.Y - edge.P2.Y) + strokeThickness;
+                    var width = Math.Abs(vertex.Location.X - edge.P2.X) + strokeThickness;
+                    var offsetX = Math.Min(vertex.Location.X, edge.P2.X) - halfStrokeThickness;
+                    var offsetY = Math.Min(vertex.Location.Y, edge.P2.Y) - halfStrokeThickness;
+                    var grid = (Grid)CanvasMain.Children[edge.CanvasIdx];
+                    grid.Height = height;
+                    grid.Width = width;
+                    grid.Margin = new Thickness(offsetX, offsetY, 0, 0);
+
+                    var line = (Line)grid.Children[0];
+                    line.X1 = vertex.Location.X - offsetX;
+                    line.Y1 = vertex.Location.Y - offsetY;
+                    line.X2 = edge.P2.X - offsetX;
+                    line.Y2 = edge.P2.Y - offsetY;
                 }
-                else if (Graph.Vertices[_onNode].Location == Graph.Edges[conn].P2)
+                else if (vertex.Location == edge.P2)
                 {
-                    Graph.Edges[conn].P2 = mousePos;
+                    edge.P2 = mousePos;
 
-                    var line = (Line)CanvasMain.Children[Graph.Edges[conn].CanvasIdx];
-                    line.X2 = mousePos.X;
-                    line.Y2 = mousePos.Y;
+                    var height = Math.Abs(vertex.Location.Y - edge.P1.Y) + strokeThickness;
+                    var width = Math.Abs(vertex.Location.X - edge.P1.X) + strokeThickness;
+                    var offsetX = Math.Min(vertex.Location.X, edge.P1.X) - halfStrokeThickness;
+                    var offsetY = Math.Min(vertex.Location.Y, edge.P1.Y) - halfStrokeThickness;
+                    var grid = (Grid)CanvasMain.Children[edge.CanvasIdx];
+                    grid.Height = height;
+                    grid.Width = width;
+                    grid.Margin = new Thickness(offsetX, offsetY, 0, 0);
+
+                    var line = (Line)grid.Children[0];
+                    line.X2 = vertex.Location.X - offsetX;
+                    line.Y2 = vertex.Location.Y - offsetY;
+                    line.X1 = edge.P1.X - offsetX;
+                    line.Y1 = edge.P1.Y - offsetY;
                 }
+            }
 
             Graph.Vertices[_onNode].Location = mousePos;
         }
@@ -267,7 +330,7 @@ namespace Network_Routes_Course_Work_10
             DrawGraph();
         }
 
-        private void ListViewPathes_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void ListViewPathes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listViewItem = ListViewPathes.SelectedItem as ListViewItem;
             if (listViewItem == null)
@@ -276,10 +339,15 @@ namespace Network_Routes_Course_Work_10
 
             foreach (var edge in Graph.Edges)
             {
-                var line = CanvasMain.Children[edge.CanvasIdx] as Line;
-                if (line == null) continue;
+                var grid = (Grid)CanvasMain.Children[edge.CanvasIdx];
+                var line = (Line)grid.Children[0];
                 line.Stroke = StrokeBrush;
                 line.StrokeThickness = 2;
+
+                var textBlock = (TextBlock)grid.Children[1];
+                textBlock.FontSize = Edge.EdgeFontSize;
+                textBlock.Foreground = StrokeBrush;
+                textBlock.FontWeight = FontWeights.Normal;
             }
 
             for (var i = 0; i < path.Vertices.Count - 1; i++)
@@ -289,12 +357,53 @@ namespace Network_Routes_Course_Work_10
                 foreach (var edge in Graph.Edges)
                 {
                     if (edge.Vertex1 != v1 && edge.Vertex2 != v1 || edge.Vertex2 != v2 && edge.Vertex1 != v2) continue;
-                    var line = CanvasMain.Children[edge.CanvasIdx] as Line;
-                    if (line == null) continue;
+                    foreach (var child in CanvasMain.Children)
+                        ((Grid) child).Visibility = Visibility.Hidden;
+                    await CanvasFlash();
+                    var grid = (Grid)CanvasMain.Children[edge.CanvasIdx];
+                    var line = (Line)grid.Children[0];
                     line.Stroke = PathBrush;
                     line.StrokeThickness = 4;
+
+                    var textBlock = (TextBlock)grid.Children[1];
+                    textBlock.FontSize = Edge.EdgeFontSize * 2;
+                    textBlock.Foreground = PathBrush;
+                    textBlock.FontWeight = FontWeights.Bold;
+
+                    CanvasUnFlash();
+                    foreach (var child in CanvasMain.Children)
+                        ((Grid)child).Visibility = Visibility.Visible;
                 }
             }
+        }
+
+        private async Task CanvasFlash()
+        {
+            const int animationWait = 150;
+            var cb = CanvasMain.Background;
+            // ReSharper disable once PossibleNullReferenceException
+            var convertFromString = (Color)ColorConverter.ConvertFromString("#FF007ACC");
+            var da = new ColorAnimation
+            {
+                To = convertFromString,
+                Duration = new Duration(TimeSpan.FromMilliseconds(animationWait))
+            };
+            cb.BeginAnimation(SolidColorBrush.ColorProperty, da);
+            await Task.Delay(animationWait);
+        }
+
+        private async Task CanvasUnFlash()
+        {
+            const int animationWait = 150;
+            var cb = CanvasMain.Background;
+            // ReSharper disable once PossibleNullReferenceException
+            var da = new ColorAnimation
+            {
+                To = Colors.White,
+                Duration = new Duration(TimeSpan.FromMilliseconds(animationWait))
+            };
+            cb.BeginAnimation(SolidColorBrush.ColorProperty, da);
+            await Task.Delay(animationWait);
         }
     }
 }

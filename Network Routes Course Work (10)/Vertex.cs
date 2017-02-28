@@ -17,7 +17,7 @@ namespace Network_Routes_Course_Work_10
         /// <summary>
         /// Font size in pixels
         /// </summary>
-        public const int VertexFontSize = 15;
+        public const int VertexFontSize = 20;
         /// <summary>
         /// Vertex index in Canvas.Children
         /// </summary>

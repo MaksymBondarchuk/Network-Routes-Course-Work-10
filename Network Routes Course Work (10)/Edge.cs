@@ -33,6 +33,8 @@ namespace Network_Routes_Course_Work_10
         /// </summary>
         public int CanvasIdx;
 
+        public const int EdgeFontSize = 15;
+
         /// <summary>
         /// Checks if p is point of line
         /// </summary>
