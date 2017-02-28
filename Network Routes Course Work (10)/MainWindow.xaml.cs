@@ -13,29 +13,36 @@ namespace Network_Routes_Course_Work_10
 {
     public partial class MainWindow
     {
+        #region Properties
+        // ReSharper disable once PossibleNullReferenceException
+        private static Color FlashColor { get; } = (Color)ColorConverter.ConvertFromString("#FF007ACC");
         private Graph Graph { get; } = new Graph();
-
         /// <summary>
-        /// Index of a node where pointer is (-1 for not on a node)
+        /// Index of a vertex where pointer is (-1 for not on a node)
         /// </summary>
-        private int _onNode = -1;
-
+        private int MouseIsOnVertex { get; set; } = -1;
         private Brush StrokeBrush { get; } = Brushes.Black;
         private Brush FillBrush { get; } = Brushes.White;
-        //private Brush PathBrush { get; } = Brushes.Red;
-        private Brush PathBrush { get; } = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FF007ACC"));
+        private Brush PathBrush { get; } = new SolidColorBrush(FlashColor);
+        #endregion
 
         public MainWindow()
         {
             InitializeComponent();
+            // For animation
             CanvasMain.Background = new SolidColorBrush(Colors.White);
-            
-            //DirectoryInfo directoryInfo = Directory.GetParent(Directory.GetCurrentDirectory()).Parent;
-            ////System.IO.Path.Combine(directoryInfo.FullName, "Case 2.json");
-            //LoadAndDraw(System.IO.Path.Combine(directoryInfo.FullName, "Case 2.json"));
-            LoadAndDraw("..\\..\\Case\\Case 2.json");
+
+            try
+            {
+                LoadAndDraw("..\\..\\Case\\Case 2.json");
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
+        #region File
         private void ButtonOpen_Click(object sender, RoutedEventArgs e)
         {
             var dlg = new OpenFileDialog
@@ -46,33 +53,6 @@ namespace Network_Routes_Course_Work_10
 
             if (dlg.ShowDialog() == true)
                 LoadAndDraw(dlg.FileName);
-        }
-
-        private void LoadAndDraw(string fileName)
-        {
-            Graph.LoadFromJson(fileName);
-            DrawGraph();
-            Graph.FloydWarshallWithPathReconstruction();
-
-            var size = Graph.Pathes.Count;
-            for (var i = 0; i < size; i++)
-                for (var j = i + 1; j < size; j++)
-                {
-                    //var lwi = new ListViewItem
-                    //{
-                    //    ColumnFrom = i.ToString(),
-                    //    ColumnTo = j.ToString(),
-                    //    ColumnPath = Graph.Pathes[i][j].ToString(),
-                    //    ColumnWeight = Graph.Pathes[i][j].Weight.ToString()
-                    //};
-                    ListViewPathes.Items.Add(new ListViewItem
-                    {
-                        ColumnFrom = i.ToString(),
-                        ColumnTo = j.ToString(),
-                        ColumnPath = Graph.Pathes[i][j].ToString(),
-                        ColumnWeight = Graph.Pathes[i][j].Weight.ToString()
-                    });
-                }
         }
 
         private void ButtonSave_Click(object sender, RoutedEventArgs e)
@@ -87,14 +67,26 @@ namespace Network_Routes_Course_Work_10
                 Graph.LoadToJson(dlg.FileName);
         }
 
-        private void ButtonBuild_Click(object sender, RoutedEventArgs e)
+        private void LoadAndDraw(string fileName)
         {
+            Graph.LoadFromJson(fileName);
+            DrawGraph();
             Graph.FloydWarshallWithPathReconstruction();
-        }
 
-        /// <summary>
-        /// Draws graph on canvas
-        /// </summary>
+            var size = Graph.Pathes.Count;
+            for (var i = 0; i < size; i++)
+                for (var j = i + 1; j < size; j++)
+                    ListViewPathes.Items.Add(new ListViewItem
+                    {
+                        ColumnFrom = i.ToString(),
+                        ColumnTo = j.ToString(),
+                        ColumnPath = Graph.Pathes[i][j].ToString(),
+                        ColumnWeight = Graph.Pathes[i][j].Weight.ToString()
+                    });
+        }
+        #endregion
+
+        #region Drawing
         private void DrawGraph()
         {
             var n = Graph.Vertices.Count;
@@ -112,7 +104,6 @@ namespace Network_Routes_Course_Work_10
                 AddNotVisual(new Point(x, y), i, StrokeBrush, FillBrush);
             }
 
-            //ConnectNotVisual(0, 1, StrokeBrush);
             for (var i = 0; i < Graph.Vertices.Count; i++)
             {
                 var i1 = i;
@@ -160,13 +151,10 @@ namespace Network_Routes_Course_Work_10
         {
             var vertex1 = Graph.Vertices[idx1];
             var vertex2 = Graph.Vertices[idx2];
-
-            const int strokeThickness = 30;
-            const int halfStrokeThickness = 15;
-            var height = Math.Abs(vertex1.Location.Y - vertex2.Location.Y) + strokeThickness;
-            var width = Math.Abs(vertex1.Location.X - vertex2.Location.X) + strokeThickness;
-            var offsetX = Math.Min(vertex1.Location.X, vertex2.Location.X) - halfStrokeThickness;
-            var offsetY = Math.Min(vertex1.Location.Y, vertex2.Location.Y) - halfStrokeThickness;
+            var height = Math.Abs(vertex1.Location.Y - vertex2.Location.Y) + Edge.StrokeThickness;
+            var width = Math.Abs(vertex1.Location.X - vertex2.Location.X) + Edge.StrokeThickness;
+            var offsetX = Math.Min(vertex1.Location.X, vertex2.Location.X) - Edge.StrokeThickness * .5;
+            var offsetY = Math.Min(vertex1.Location.Y, vertex2.Location.Y) - Edge.StrokeThickness * .5;
             var grid = new Grid
             {
                 Height = height,
@@ -193,7 +181,6 @@ namespace Network_Routes_Course_Work_10
                 FontSize = Edge.EdgeFontSize,
                 Text = $" {Graph.Weights[idx1][idx2]} ",
                 Background = Brushes.White,
-                //Margin = new Thickness(40, 40, 0, 0),
             };
             grid.Children.Add(textBlock);
 
@@ -209,39 +196,41 @@ namespace Network_Routes_Course_Work_10
                 CanvasIdx = CanvasMain.Children.Count - 1
             });
 
-            //Graph.Vertices[idx1].ConnectedWith.Add(idx2);
             Graph.Vertices[idx1].ConnectedBy.Add(Graph.Edges.Count - 1);
-            //Graph.Vertices[idx2].ConnectedWith.Add(idx1);
             Graph.Vertices[idx2].ConnectedBy.Add(Graph.Edges.Count - 1);
 
+        }
+
+        private void FillVertex(int nodeIdx, Brush color)
+        {
+            var grid = (Grid)CanvasMain.Children[Graph.Vertices[nodeIdx].CanvasIdx];
+            var nodeGray = (Ellipse)grid.Children[0];
+            nodeGray.Fill = color;
         }
 
         /// <summary>
         /// Changes node location
         /// </summary>
         /// <param name="mousePos">New location</param>
-        private void MoveNode(Point mousePos)
+        private void MoveVertex(Point mousePos)
         {
             // Moving node
-            var gridVertex = (Grid)CanvasMain.Children[Graph.Vertices[_onNode].CanvasIdx];
+            var gridVertex = (Grid)CanvasMain.Children[Graph.Vertices[MouseIsOnVertex].CanvasIdx];
             gridVertex.Margin = new Thickness(mousePos.X - gridVertex.Height * .5, mousePos.Y - gridVertex.Width * .5, 0, 0);
 
-            const int strokeThickness = 30;
-            const int halfStrokeThickness = 15;
-
             // Moving node connections
-            foreach (var e in Graph.Vertices[_onNode].ConnectedBy)
+            foreach (var e in Graph.Vertices[MouseIsOnVertex].ConnectedBy)
             {
                 var edge = Graph.Edges[e];
-                var vertex = Graph.Vertices[_onNode];
+                var vertex = Graph.Vertices[MouseIsOnVertex];
                 if (vertex.Location == edge.P1)
                 {
                     edge.P1 = mousePos;
 
-                    var height = Math.Abs(vertex.Location.Y - edge.P2.Y) + strokeThickness;
-                    var width = Math.Abs(vertex.Location.X - edge.P2.X) + strokeThickness;
-                    var offsetX = Math.Min(vertex.Location.X, edge.P2.X) - halfStrokeThickness;
-                    var offsetY = Math.Min(vertex.Location.Y, edge.P2.Y) - halfStrokeThickness;
+                    var height = Math.Abs(vertex.Location.Y - edge.P2.Y) + Edge.StrokeThickness;
+                    var width = Math.Abs(vertex.Location.X - edge.P2.X) + Edge.StrokeThickness;
+                    var offsetX = Math.Min(vertex.Location.X, edge.P2.X) - Edge.StrokeThickness * .5;
+                    var offsetY = Math.Min(vertex.Location.Y, edge.P2.Y) - Edge.StrokeThickness * .5;
                     var grid = (Grid)CanvasMain.Children[edge.CanvasIdx];
                     grid.Height = height;
                     grid.Width = width;
@@ -257,10 +246,10 @@ namespace Network_Routes_Course_Work_10
                 {
                     edge.P2 = mousePos;
 
-                    var height = Math.Abs(vertex.Location.Y - edge.P1.Y) + strokeThickness;
-                    var width = Math.Abs(vertex.Location.X - edge.P1.X) + strokeThickness;
-                    var offsetX = Math.Min(vertex.Location.X, edge.P1.X) - halfStrokeThickness;
-                    var offsetY = Math.Min(vertex.Location.Y, edge.P1.Y) - halfStrokeThickness;
+                    var height = Math.Abs(vertex.Location.Y - edge.P1.Y) + Edge.StrokeThickness;
+                    var width = Math.Abs(vertex.Location.X - edge.P1.X) + Edge.StrokeThickness;
+                    var offsetX = Math.Min(vertex.Location.X, edge.P1.X) - Edge.StrokeThickness * .5;
+                    var offsetY = Math.Min(vertex.Location.Y, edge.P1.Y) - Edge.StrokeThickness * .5;
                     var grid = (Grid)CanvasMain.Children[edge.CanvasIdx];
                     grid.Height = height;
                     grid.Width = width;
@@ -274,22 +263,24 @@ namespace Network_Routes_Course_Work_10
                 }
             }
 
-            Graph.Vertices[_onNode].Location = mousePos;
+            Graph.Vertices[MouseIsOnVertex].Location = mousePos;
         }
+        #endregion
 
+        #region Mouse events
         private void Window_MouseDown(object sender, MouseButtonEventArgs e)
         {
             for (var i = 0; i < Graph.Vertices.Count; i++)
                 if (Graph.Vertices[i].IsMyPoint(Mouse.GetPosition(CanvasMain)))
                 {
-                    _onNode = i;
+                    MouseIsOnVertex = i;
                     break;
                 }
         }
 
         private void Window_MouseUp(object sender, MouseButtonEventArgs e)
         {
-            _onNode = -1;
+            MouseIsOnVertex = -1;
             foreach (var vertex in Graph.Vertices)
                 Panel.SetZIndex(CanvasMain.Children[vertex.CanvasIdx], 2);
         }
@@ -298,30 +289,14 @@ namespace Network_Routes_Course_Work_10
         {
             var mousePos = Mouse.GetPosition(CanvasMain);
 
-            if (Mouse.LeftButton == MouseButtonState.Pressed && _onNode != -1)
+            if (Mouse.LeftButton == MouseButtonState.Pressed && MouseIsOnVertex != -1)
             {
-                Panel.SetZIndex(CanvasMain.Children[Graph.Vertices[_onNode].CanvasIdx], 4);
-                MoveNode(mousePos);
-
-                //if (1 < Graph.Vertices.Select(v => v.IsMyPoint(mousePos)).Count())
-                //{
-                //    MoveNode(OldPoint);
-                //    _onNode = -1;
-                //    //Graph.Vertices[_onNode].Location = OldPoint;
-                //}
+                Panel.SetZIndex(CanvasMain.Children[Graph.Vertices[MouseIsOnVertex].CanvasIdx], 4);
+                MoveVertex(mousePos);
             }
             else
-            {
                 for (var i = 0; i < Graph.Vertices.Count; i++)
-                    FillNode(i, Graph.Vertices[i].IsMyPoint(mousePos) ? Brushes.Gray : FillBrush);
-            }
-        }
-
-        private void FillNode(int nodeIdx, Brush color)
-        {
-            var grid = (Grid)CanvasMain.Children[Graph.Vertices[nodeIdx].CanvasIdx];
-            var nodeGray = (Ellipse)grid.Children[0];
-            nodeGray.Fill = color;
+                    FillVertex(i, Graph.Vertices[i].IsMyPoint(mousePos) ? Brushes.Gray : FillBrush);
         }
 
         private void WindowMain_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -329,7 +304,9 @@ namespace Network_Routes_Course_Work_10
             CanvasMain.Children.Clear();
             DrawGraph();
         }
+        #endregion
 
+        #region Pathes
         private async void ListViewPathes_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             var listViewItem = ListViewPathes.SelectedItem as ListViewItem;
@@ -358,7 +335,7 @@ namespace Network_Routes_Course_Work_10
                 {
                     if (edge.Vertex1 != v1 && edge.Vertex2 != v1 || edge.Vertex2 != v2 && edge.Vertex1 != v2) continue;
                     foreach (var child in CanvasMain.Children)
-                        ((Grid) child).Visibility = Visibility.Hidden;
+                        ((Grid)child).Visibility = Visibility.Hidden;
                     await CanvasFlash();
                     var grid = (Grid)CanvasMain.Children[edge.CanvasIdx];
                     var line = (Line)grid.Children[0];
@@ -381,22 +358,19 @@ namespace Network_Routes_Course_Work_10
         {
             const int animationWait = 150;
             var cb = CanvasMain.Background;
-            // ReSharper disable once PossibleNullReferenceException
-            var convertFromString = (Color)ColorConverter.ConvertFromString("#FF007ACC");
             var da = new ColorAnimation
             {
-                To = convertFromString,
+                To = FlashColor,
                 Duration = new Duration(TimeSpan.FromMilliseconds(animationWait))
             };
             cb.BeginAnimation(SolidColorBrush.ColorProperty, da);
             await Task.Delay(animationWait);
         }
 
-        private async Task CanvasUnFlash()
+        private async void CanvasUnFlash()
         {
             const int animationWait = 150;
             var cb = CanvasMain.Background;
-            // ReSharper disable once PossibleNullReferenceException
             var da = new ColorAnimation
             {
                 To = Colors.White,
@@ -405,5 +379,6 @@ namespace Network_Routes_Course_Work_10
             cb.BeginAnimation(SolidColorBrush.ColorProperty, da);
             await Task.Delay(animationWait);
         }
+        #endregion
     }
 }

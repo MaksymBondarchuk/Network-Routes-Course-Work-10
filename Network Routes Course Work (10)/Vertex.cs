@@ -42,15 +42,5 @@ namespace Network_Routes_Course_Work_10
         {
             return Math.Pow(p.X - Location.X, 2) + Math.Pow(p.Y - Location.Y, 2) <= VertexSize * VertexSize * .25;
         }
-
-        /// <summary>
-        /// Checks if p is point near node (2 radii distance)
-        /// </summary>
-        /// <param name="p">Explored point</param>
-        /// <returns></returns>
-        public bool IsNearPoint(Point p)
-        {
-            return Math.Pow(p.X - Location.X, 2) + Math.Pow(p.Y - Location.Y, 2) <= VertexSize * VertexSize;
-        }
     }
 }

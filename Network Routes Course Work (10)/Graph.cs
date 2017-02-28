@@ -7,21 +7,16 @@ namespace Network_Routes_Course_Work_10
     public class Graph
     {
         #region Visual
-        /// <summary>
-        /// List of graph nodes
-        /// </summary>
         public readonly List<Vertex> Vertices = new List<Vertex>();
-        /// <summary>
-        /// List of connections between nodes. For visual part only
-        /// </summary>
         public readonly List<Edge> Edges = new List<Edge>();
         #endregion
 
 
         #region Math
+        // ReSharper disable once MemberCanBePrivate.Global
         public List<List<int>> Weights { get; set; } = new List<List<int>>();
-        public List<List<int>> Next { get; set; } = new List<List<int>>();
-        public List<List<Path>> Pathes { get; set; } = new List<List<Path>>();
+        private List<List<int>> Next { get; } = new List<List<int>>();
+        public List<List<Path>> Pathes { get; } = new List<List<Path>>();
 
         public void LoadFromJson(string fileName)
         {

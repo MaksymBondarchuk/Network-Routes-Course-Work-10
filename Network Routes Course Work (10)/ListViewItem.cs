@@ -1,4 +1,5 @@
-﻿namespace Network_Routes_Course_Work_10
+﻿// ReSharper disable UnusedAutoPropertyAccessor.Global
+namespace Network_Routes_Course_Work_10
 {
     public class ListViewItem
     {
