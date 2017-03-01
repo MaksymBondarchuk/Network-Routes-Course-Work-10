@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -16,7 +17,7 @@ namespace Network_Routes_Course_Work_10
         #region Properties
         // ReSharper disable once PossibleNullReferenceException
         private static Color FlashColor { get; } = (Color)ColorConverter.ConvertFromString("#FF007ACC");
-        private Graph Graph { get; } = new Graph();
+        private Graph Graph { get; set; } = new Graph();
         /// <summary>
         /// Index of a vertex where pointer is (-1 for not on a node)
         /// </summary>
@@ -70,6 +71,10 @@ namespace Network_Routes_Course_Work_10
         private void LoadAndDraw(string fileName)
         {
             Graph.LoadFromJson(fileName);
+            LoadAndDrawWithoutFile();
+        }
+        private void LoadAndDrawWithoutFile()
+        {
             DrawGraph();
             Graph.FloydWarshallWithPathReconstruction();
 
@@ -380,5 +385,48 @@ namespace Network_Routes_Course_Work_10
             await Task.Delay(animationWait);
         }
         #endregion
+
+        private void ButtonAddVertex_Click(object sender, RoutedEventArgs e)
+        {
+            CanvasMain.Children.Clear();
+
+            var weights = new List<List<int>>(Graph.Weights);
+            Graph = new Graph
+            {
+                Weights = weights
+            };
+
+            Graph.Weights.Add(new List<int>());
+            var newRow = Graph.Weights.Last();
+            var random = new Random();
+            for (var i = 0; i < Graph.Weights.Count - 1; i++)
+            {
+                var weight = random.Next(1, 50);
+                Graph.Weights[i].Add(weight);
+                newRow.Add(weight);
+            }
+            newRow.Add(0);
+            Graph.LoadFromWeights();
+            LoadAndDrawWithoutFile();
+        }
+
+        private void ButtonDeleteVertex_Click(object sender, RoutedEventArgs e)
+        {
+            CanvasMain.Children.Clear();
+
+            var weights = new List<List<int>>(Graph.Weights);
+            Graph = new Graph
+            {
+                Weights = weights
+            };
+
+            var lastIndex = Graph.Weights.Count - 1;
+            for (var i = 0; i < Graph.Weights.Count - 1; i++)
+                Graph.Weights[i].RemoveAt(lastIndex);
+            Graph.Weights.RemoveAt(lastIndex);
+
+            Graph.LoadFromWeights();
+            LoadAndDrawWithoutFile();
+        }
     }
 }

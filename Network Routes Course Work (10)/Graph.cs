@@ -28,6 +28,11 @@ namespace Network_Routes_Course_Work_10
                 Weights = result.Weights;
             }
 
+            LoadFromWeights();
+        }
+
+        public void LoadFromWeights()
+        {
             var size = Weights.Count;
             for (var i = 0; i < size; i++)
                 Vertices.Add(new Vertex());
@@ -38,7 +43,6 @@ namespace Network_Routes_Course_Work_10
                     Vertices[i].ConnectedWith.Add(j);
                     Vertices[j].ConnectedWith.Add(i);
                 }
-
         }
 
         public void LoadToJson(string fileName)
