@@ -330,6 +330,7 @@ namespace Network_Routes_Course_Work_10
                 textBlock.FontSize = Edge.EdgeFontSize;
                 textBlock.Foreground = StrokeBrush;
                 textBlock.FontWeight = FontWeights.Normal;
+                Panel.SetZIndex(CanvasMain.Children[edge.CanvasIdx], 2);
             }
 
             for (var i = 0; i < path.Vertices.Count - 1; i++)
@@ -351,6 +352,7 @@ namespace Network_Routes_Course_Work_10
                     textBlock.FontSize = Edge.EdgeFontSize * 2;
                     textBlock.Foreground = PathBrush;
                     textBlock.FontWeight = FontWeights.Bold;
+                    Panel.SetZIndex(CanvasMain.Children[edge.CanvasIdx], 5);
 
                     CanvasUnFlash();
                     foreach (var child in CanvasMain.Children)
@@ -386,6 +388,7 @@ namespace Network_Routes_Course_Work_10
         }
         #endregion
 
+        #region Add/Delete
         private void ButtonAddVertex_Click(object sender, RoutedEventArgs e)
         {
             CanvasMain.Children.Clear();
@@ -423,10 +426,12 @@ namespace Network_Routes_Course_Work_10
             var lastIndex = Graph.Weights.Count - 1;
             for (var i = 0; i < Graph.Weights.Count - 1; i++)
                 Graph.Weights[i].RemoveAt(lastIndex);
-            Graph.Weights.RemoveAt(lastIndex);
+            if (0 <= lastIndex)
+                Graph.Weights.RemoveAt(lastIndex);
 
             Graph.LoadFromWeights();
             LoadAndDrawWithoutFile();
         }
+        #endregion
     }
 }
