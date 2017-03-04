@@ -146,7 +146,7 @@ namespace Network_Routes_Course_Work_10
             };
             grid.Children.Add(textBlock);
             CanvasMain.Children.Add(grid);
-            Panel.SetZIndex(CanvasMain.Children[CanvasMain.Children.Count - 1], 2);
+            Panel.SetZIndex(CanvasMain.Children[CanvasMain.Children.Count - 1], 10);
 
             Graph.Vertices[idx].Location = pos;
             Graph.Vertices[idx].CanvasIdx = CanvasMain.Children.Count - 1;
@@ -287,7 +287,7 @@ namespace Network_Routes_Course_Work_10
         {
             MouseIsOnVertex = -1;
             foreach (var vertex in Graph.Vertices)
-                Panel.SetZIndex(CanvasMain.Children[vertex.CanvasIdx], 2);
+                Panel.SetZIndex(CanvasMain.Children[vertex.CanvasIdx], 10);
         }
 
         private void Window_MouseMove(object sender, MouseEventArgs e)
@@ -296,7 +296,7 @@ namespace Network_Routes_Course_Work_10
 
             if (Mouse.LeftButton == MouseButtonState.Pressed && MouseIsOnVertex != -1)
             {
-                Panel.SetZIndex(CanvasMain.Children[Graph.Vertices[MouseIsOnVertex].CanvasIdx], 4);
+                Panel.SetZIndex(CanvasMain.Children[Graph.Vertices[MouseIsOnVertex].CanvasIdx], 20);
                 MoveVertex(mousePos);
             }
             else
@@ -401,10 +401,9 @@ namespace Network_Routes_Course_Work_10
 
             Graph.Weights.Add(new List<int>());
             var newRow = Graph.Weights.Last();
-            var random = new Random();
+            var weight = RadioButtonMin.IsChecked != null && (bool) RadioButtonMin.IsChecked ? 1 : 999;
             for (var i = 0; i < Graph.Weights.Count - 1; i++)
             {
-                var weight = random.Next(1, 50);
                 Graph.Weights[i].Add(weight);
                 newRow.Add(weight);
             }

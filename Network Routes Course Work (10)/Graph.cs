@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Web.Script.Serialization;
 
@@ -91,11 +92,17 @@ namespace Network_Routes_Course_Work_10
             for (var k = 0; k < size; k++)
                 for (var i = 0; i < size; i++)
                     for (var j = 0; j < size; j++)
+                    {
+                        //if (j == 7)
+                        //{
+                            
+                        //}
                         if (Pathes[i][j].Weight > Pathes[i][k].Weight + Pathes[k][j].Weight)
                         {
                             Pathes[i][j].Weight = Pathes[i][k].Weight + Pathes[k][j].Weight;
                             Next[i][j] = Next[i][k];
                         }
+                    }
 
             for (var i = 0; i < size; i++)
                 for (var j = i + 1; j < size; j++)
