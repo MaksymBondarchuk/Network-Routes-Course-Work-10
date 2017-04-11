@@ -4,12 +4,12 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="532" Width="1079" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" WindowState="Maximized" SizeChanged="WindowMain_SizeChanged" MinWidth="525" MinHeight="350">
+        Title="Network Routes Course Work" Height="532" Width="1079" WindowStartupLocation="CenterScreen" MouseDown="Window_MouseDown" MouseUp="Window_MouseUp" MouseMove="Window_MouseMove" WindowState="Maximized" SizeChanged="WindowMain_SizeChanged" MinWidth="525" MinHeight="350">
     <Grid>
         <Button x:Name="ButtonOpen" Content="Open" HorizontalAlignment="Left" Margin="10,10,0,0" VerticalAlignment="Top" Width="75" Click="ButtonOpen_Click"/>
         <Button x:Name="ButtonSave" Content="Save" HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="75" Click="ButtonSave_Click"/>
-        <Canvas x:Name="CanvasMain" Margin="130,10,196,10" Background="White"/>
-        <ListView x:Name="ListViewPathes" Margin="0,10,10,10" IsHitTestVisible="True" BorderThickness="1" Background="White" HorizontalAlignment="Right" Width="181" SelectionMode="Single" SelectionChanged="ListViewPathes_SelectionChanged">
+        <Canvas x:Name="CanvasMain" Margin="130,10,233,10" Background="White"/>
+        <ListView x:Name="ListViewPathes" Margin="0,10,10,10" IsHitTestVisible="True" BorderThickness="1" Background="White" HorizontalAlignment="Right" Width="218" SelectionMode="Single" SelectionChanged="ListViewPathes_SelectionChanged">
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="From" DisplayMemberBinding="{Binding ColumnFrom}"/>

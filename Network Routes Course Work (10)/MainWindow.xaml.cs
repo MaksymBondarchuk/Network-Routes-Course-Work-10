@@ -33,14 +33,16 @@ namespace Network_Routes_Course_Work_10
             // For animation
             CanvasMain.Background = new SolidColorBrush(Colors.White);
 
-            try
-            {
-                LoadAndDraw("..\\..\\Case\\Case 2.json");
-            }
-            catch (Exception)
-            {
-                // ignored
-            }
+            LoadAndDraw("..\\..\\Case\\Case 2.json");
+
+            //try
+            //{
+            //    LoadAndDraw("..\\..\\Case\\Case 2.json");
+            //}
+            //catch (Exception)
+            //{
+            //    // ignored
+            //}
         }
 
         #region File
@@ -76,7 +78,7 @@ namespace Network_Routes_Course_Work_10
         private void LoadAndDrawWithoutFile()
         {
             DrawGraph();
-            Graph.FloydWarshallWithPathReconstruction();
+            Graph.BruteForce();
 
             var size = Graph.Pathes.Count;
             for (var i = 0; i < size; i++)
@@ -392,6 +394,7 @@ namespace Network_Routes_Course_Work_10
         private void ButtonAddVertex_Click(object sender, RoutedEventArgs e)
         {
             CanvasMain.Children.Clear();
+            ListViewPathes.Items.Clear();
 
             var weights = new List<List<int>>(Graph.Weights);
             Graph = new Graph
@@ -401,7 +404,7 @@ namespace Network_Routes_Course_Work_10
 
             Graph.Weights.Add(new List<int>());
             var newRow = Graph.Weights.Last();
-            var weight = RadioButtonMin.IsChecked != null && (bool) RadioButtonMin.IsChecked ? 1 : 999;
+            var weight = RadioButtonMin.IsChecked != null && (bool)RadioButtonMin.IsChecked ? 1 : 999;
             for (var i = 0; i < Graph.Weights.Count - 1; i++)
             {
                 Graph.Weights[i].Add(weight);
@@ -415,6 +418,7 @@ namespace Network_Routes_Course_Work_10
         private void ButtonDeleteVertex_Click(object sender, RoutedEventArgs e)
         {
             CanvasMain.Children.Clear();
+            ListViewPathes.Items.Clear();
 
             var weights = new List<List<int>>(Graph.Weights);
             Graph = new Graph
