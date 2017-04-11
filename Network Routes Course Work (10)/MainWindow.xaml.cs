@@ -404,7 +404,9 @@ namespace Network_Routes_Course_Work_10
 
             Graph.Weights.Add(new List<int>());
             var newRow = Graph.Weights.Last();
-            var weight = RadioButtonMin.IsChecked != null && (bool)RadioButtonMin.IsChecked ? 1 : 999;
+            var weight = RadioButtonMin.IsChecked != null && (bool)RadioButtonMin.IsChecked 
+                ? Graph.Weights.SelectMany(w => w).Where(w => w != 0).Min()
+                : Graph.Weights.SelectMany(w => w).Where(w => w != 0).Max();
             for (var i = 0; i < Graph.Weights.Count - 1; i++)
             {
                 Graph.Weights[i].Add(weight);

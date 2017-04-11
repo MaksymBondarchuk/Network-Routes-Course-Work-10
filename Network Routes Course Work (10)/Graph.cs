@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Web.Script.Serialization;
@@ -19,8 +18,9 @@ namespace Network_Routes_Course_Work_10
         public List<List<int>> Weights { get; set; } = new List<List<int>>();
         //private List<List<int>> Next { get; } = new List<List<int>>();
         public List<List<Path>> Pathes { get; } = new List<List<Path>>();
+
         private List<Path> TempPathes { get; } = new List<Path>();
-        public Path Path { get; set; }
+
 
         public void LoadFromJson(string fileName)
         {
@@ -117,8 +117,7 @@ namespace Network_Routes_Course_Work_10
             Pathes.Clear();
 
             BuildPathesRecursive(0, Vertices.Count - 1, new Path());
-            Path = TempPathes.Where(p => p.Vertices.Count == Weights.Count).OrderBy(p => p.Weight).First();
-            
+
             var size = Weights.Count;
             for (var i = 0; i < size; i++)
             {
