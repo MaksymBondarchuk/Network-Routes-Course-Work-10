@@ -33,16 +33,16 @@ namespace Network_Routes_Course_Work_10
             // For animation
             CanvasMain.Background = new SolidColorBrush(Colors.White);
 
-            LoadAndDraw("..\\..\\Case\\Case 2.json");
+            //LoadAndDraw("..\\..\\Case\\Case 2.json");
 
-            //try
-            //{
-            //    LoadAndDraw("..\\..\\Case\\Case 2.json");
-            //}
-            //catch (Exception)
-            //{
-            //    // ignored
-            //}
+            try
+            {
+                LoadAndDraw("..\\..\\Case\\Case 2.json");
+            }
+            catch (Exception)
+            {
+                // ignored
+            }
         }
 
         #region File
